@@ -4,11 +4,13 @@ const regExDict = {
 }
 
 /**
- * 
- * @param {string} el - 
+ * Function for input validation
+ * @param {HTMLInputElement} el - 
  * @returns {boolean}
  */
 
 export function validate(el) {
-    
+    const reqName = el.dataset.required || 'text';
+    const regResult = regExDict[reqName].test(el.value);
+    return regResult;
 }
