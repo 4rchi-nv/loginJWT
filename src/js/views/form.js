@@ -1,18 +1,33 @@
-function errorTemplate(msg) {
-    return `
-    <div class="invalid-feedback" style="color: red;">${msg}</div>
-    `
-};
+/**
+ * Function inputErrorTemplate
+ * @param {String} msg
+ */
+function inputErrorTemplate(msg) {
+  return `
+    <div class="invalid-feedback">${msg}</div>
+  `;
+}
 
 /**
- * Function showError. Returns krasivy error message.
- * @param {HTMLInputElement} el 
+ * Function showInputError. Add input error
+ * @param {HTMLInputElement} el
  */
-export function showError(el) {
-    const parent = el.parentElement;
-    const msg = el.getAttribute('data-invalid-message') || 'Input is not correct';
-    el.classList.add('is-invalid')
-    const template = errorTemplate(msg);
-    parent.insertAdjacentHTML('beforeend', template)
-    // document.body.innerHTML = template;
-};
+export function showInputError(el) {
+  const parent = el.parentElement;
+  const msg = el.dataset.invalidMessage || 'Invalid input';
+  const template = inputErrorTemplate(msg);
+  el.classList.add('is-invalid');
+  parent.insertAdjacentHTML('beforeend', template);
+}
+/**
+ * Function removeInputError. Remove input error
+ * @param {HTMLInputElement} el
+ */
+export function removeInputError(el) {
+  const parent = el.parentElement;
+  const err = parent.querySelector('.invalid-feedback');
+  if (!err) return;
+
+  el.classList.remove('is-invalid');
+  parent.removeChild(err);
+}

@@ -1,25 +1,41 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import '../css/style.css';
-import UI from './views/ui';
+
+import UI from './config/ui.config';
 import { validate } from './helpers/validate';
-import { showError } from './views/form';
+import { showInputError, removeInputError } from './views/form';
+import { login } from './services/auth.service';
+import { notify } from './views/notifications';
+import { getNews } from './services/news.service';
 
-// const { form, email, password } = UI;
-const { form, ...inputs } = UI;
+const { form, inputEmail, inputPassword } = UI;
+const inputs = [inputEmail, inputPassword];
 
-//events
+// Events
 form.addEventListener('submit', e => {
-    e.preventDefault();
-    onSubmit();
+  e.preventDefault();
+  onSubmit();
 });
+inputs.forEach(el => el.addEventListener('focus', () => removeInputError(el)));
 
-//handlers
-function onSubmit() {
-    const isValid = Object.values(inputs).every(el => {
-        const isValidInput = validate(el);
-        if (!isValidInput) {
-            showError(el);
-        }
-        return isValidInput;
-    });
-};
+// Handlers
+async function onSubmit() {
+  const isValidForm = inputs.every(el => {
+    const isValidInput = validate(el);
+    if (!isValidInput) {
+      showInputError(el);
+    }
+    return isValidInput;
+  });
+
+  if (!isValidForm) return;
+
+  try {
+    await login(inputEmail.value, inputPassword.value);
+    await getNews();
+    form.reset();
+    notify({ msg: 'Login success', className: 'alert-success' });
+  } catch (err) {
+    notify({ mas: 'Login faild', className: 'alert-danger' });
+  }
+}
